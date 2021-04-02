@@ -20,10 +20,7 @@ resource "aws_ecr_repository" "ecr" {
   image_scanning_configuration {
     scan_on_push = true
   }
-
-  tags = merge(var.refs.common_tags, {
-    ApplicationRole = "${var.name}-ecr"
-  })
+  
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
