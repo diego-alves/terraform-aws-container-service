@@ -3,10 +3,17 @@
 # ----------------------------------------------------------------------------------------------------------------------
 
 terraform {
-  # This module is now only being tested with Terraform 0.13.x. However, to make upgrading easier, we are setting
-  # 0.12.26 as the minimum version, as that version added support for required_providers with source URLs, making it
-  # forwards compatible with 0.13.x code.
-  required_version = ">= 0.12.26"
+  # This module is now only being tested with Terraform 0.14.x.
+  required_version = ">= 0.14.0"
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Data Module
+# ---------------------------------------------------------------------------------------------------------------------
+
+module "data" {
+  source  = "diego-alves/data/aws"
+  version = "0.0.5"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -15,7 +22,7 @@ terraform {
 
 resource "aws_ecr_repository" "ecr" {
   name                 = var.name
-  image_tag_mutability = "MUTABLE"
+  image_tag_mutability = "IMMUTABLE"
 
   image_scanning_configuration {
     scan_on_push = true
@@ -33,12 +40,11 @@ resource "aws_ecr_lifecycle_policy" "policy" {
   policy = jsonencode({
     rules : [{
       rulePriority : 1,
-      description : "Expire images older than 14 days",
+      description : "Keep only the early 5 images",
       selection : {
-        tagStatus : "untagged",
-        countType : "sinceImagePushed",
-        countUnit : "days",
-        countNumber : 14
+        tagStatus : "any",
+        countType : "imageCountMoreThan",
+        countNumber : 5
       },
       action : {
         type : "expire"

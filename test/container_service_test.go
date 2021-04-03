@@ -8,20 +8,19 @@ import (
 )
 
 func TestContainerServiceExample(t *testing.T) {
-	// Construct the terraform options with default retryable errors to handle the most common
-	// retryable errors in terraform testing.
+	t.Parallel()
+	expectedRegion := "us-east-1"
+
 	terraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
-		// Set the path to the Terraform code that will be tested.
 		TerraformDir: "../examples/container-service",
+		EnvVars: map[string]string{
+			"AWS_DEFAULT_REGION": expectedRegion,
+		},
 	})
 
-	// Clean up resources with "terraform destroy" at the end of the test.
 	defer terraform.Destroy(t, terraformOptions)
-
-	// Run "terraform init" and "terraform apply". Fail the test if there are any errors.
 	terraform.InitAndApply(t, terraformOptions)
 
-	// Run `terraform output` to get the values of output variables and check they have the expected values.
 	output := terraform.Output(t, terraformOptions, "repository_url")
-	assert.Equal(t, "760373735544.dkr.ecr.us-east-1.amazonaws.com/container_service_module_test", output)
+	assert.Regexp(t, "\\d{12}.dkr.ecr."+expectedRegion+".amazonaws.com/container_service_module_test", output)
 }
