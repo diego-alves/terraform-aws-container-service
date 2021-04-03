@@ -16,39 +16,8 @@ module "data" {
   version = "0.0.5"
 }
 
-# ---------------------------------------------------------------------------------------------------------------------
-# CREATE A DOCKER REPOSITORY
-# ---------------------------------------------------------------------------------------------------------------------
+module "service" {
+  source = "./modules/ecs"
 
-resource "aws_ecr_repository" "ecr" {
-  name                 = var.name
-  image_tag_mutability = "IMMUTABLE"
-
-  image_scanning_configuration {
-    scan_on_push = true
-  }
-  
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# CREATE A LIFECYCLE POLICY FOR THE DOCKER REPOSITORY
-# ---------------------------------------------------------------------------------------------------------------------
-
-resource "aws_ecr_lifecycle_policy" "policy" {
-  repository = aws_ecr_repository.ecr.name
-
-  policy = jsonencode({
-    rules : [{
-      rulePriority : 1,
-      description : "Keep only the early 5 images",
-      selection : {
-        tagStatus : "any",
-        countType : "imageCountMoreThan",
-        countNumber : 5
-      },
-      action : {
-        type : "expire"
-      }
-    }]
-  })
+  name       = var.name
 }
