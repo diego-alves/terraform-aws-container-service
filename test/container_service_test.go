@@ -22,5 +22,11 @@ func TestContainerServiceExample(t *testing.T) {
 	terraform.InitAndApply(t, terraformOptions)
 
 	output := terraform.Output(t, terraformOptions, "repository_url")
-	assert.Regexp(t, "\\d{12}.dkr.ecr."+expectedRegion+".amazonaws.com/container_service_module_test", output)
+	targetGroup := terraform.Output(t, terraformOptions, "default_target_group")
+	targetGroups := terraform.OutputMap(t, terraformOptions, "target_groups")
+
+	assert.Regexp(t, "\\d{12}.dkr.ecr."+expectedRegion+".amazonaws.com/module-test", output)
+	assert.Regexp(t, "arn:aws:elasticloadbalancing:us-east-1:\\d{12}:targetgroup/module-test-lb-tg/[0-9a-z]{12}", targetGroup)
+	assert.Regexp(t, "arn:aws:elasticloadbalancing:us-east-1:\\d{12}:targetgroup/module-test-api-lb-tg/[0-9a-z]{12}", targetGroups["api"])
+
 }

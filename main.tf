@@ -16,8 +16,25 @@ module "data" {
   version = "0.0.5"
 }
 
+module "load_balancer" {
+  source = "./modules/elb"
+
+  name = var.name
+  vpc_id = module.data.vpc_id
+  subnets = module.data.subnet_ids.app
+  zone = ""
+  rules = {
+    api = {
+      paths = ["/api/*", "/docs"]
+      hc_path = "/api/v1/health/"
+      port = 80
+    }
+  }
+}
+
 module "service" {
   source = "./modules/ecs"
 
   name       = var.name
+
 }

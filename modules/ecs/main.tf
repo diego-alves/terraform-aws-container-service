@@ -8,15 +8,10 @@ resource "aws_ecs_task_definition" "task" {
   cpu    = var.cpu
   memory = var.mem
 
-  #   task_role_arn      = data.aws_iam_role.task_role.arn
   execution_role_arn = aws_iam_role.task_execution_role.arn
 
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-
-  #   tags = merge(var.refs.common_tags, {
-  #     ApplicationRole = "${var.name}-task"
-  #   })
 
   container_definitions = jsonencode([
     {
@@ -25,21 +20,12 @@ resource "aws_ecs_task_definition" "task" {
       essential = true
       portMappings = [
         {
-          #   protocol      = "tcp"
           containerPort = var.port
           hostPort      = var.port
         }
       ],
       "environment" : [for k, v in var.environment : { name : k, value : v }],
-      "secrets" : [for k, v in var.secrets : { name : k, valueFrom : v }],
-      #   "logConfiguration" : {
-      #     "logDriver" : "awslogs",
-      #     "options" : {
-      #       "awslogs-group" : "/${var.cluster_name}/${var.name}",
-      #       "awslogs-region" : var.region,
-      #       "awslogs-stream-prefix" : "${var.name}-task"
-      #     }
-      #   }
+      "secrets" : [for k, v in var.secrets : { name : k, valueFrom : v }]
     }
   ])
 }
