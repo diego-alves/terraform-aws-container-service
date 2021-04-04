@@ -5,23 +5,27 @@
 
 variable "name" {
   description = "ECS Service Name"
+  type        = string
 }
 
 variable "cluster_name" {
   description = "ECS Cluster Name"
+  type        = string
 }
 
 variable "vpc_id" {
-  description = "VPC ID" 
+  description = "VPC ID"
+  type        = string
 }
 
 variable "subnets" {
   description = "List of Subnets to include in the ECS Service"
+  type        = set(string)
 }
 
 variable "target_group" {
   description = "Target Group"
-  
+  type        = string
 }
 
 # variable "region" {

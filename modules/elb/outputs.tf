@@ -9,3 +9,7 @@ output "target_groups" {
   })
   description = "Key value target group corresponding for the key in the rules variable"
 }
+
+output "domain" {
+  value = aws_route53_record.route.name
+}

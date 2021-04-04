@@ -3,14 +3,14 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 resource "aws_ecs_service" "service" {
-
-  name            = var.name
-  cluster         = data.aws_ecs_cluster.selected.id
-  task_definition = aws_ecs_task_definition.task.arn
-  desired_count   = 2
-
-  launch_type          = "FARGATE"
-  force_new_deployment = true
+  name                    = var.name
+  cluster                 = data.aws_ecs_cluster.selected.id
+  task_definition         = aws_ecs_task_definition.task.arn
+  desired_count           = 2
+  launch_type             = "FARGATE"
+  force_new_deployment    = true
+  enable_ecs_managed_tags = true
+  propagate_tags          = "SERVICE"
 
   network_configuration {
     subnets          = var.subnets
@@ -23,10 +23,6 @@ resource "aws_ecs_service" "service" {
     container_name   = var.name
     container_port   = var.port
   }
-
-  enable_ecs_managed_tags = true
-  propagate_tags          = "SERVICE"
-
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -81,7 +77,6 @@ resource "aws_iam_role" "task_execution_role" {
         }
       ]
   })
-
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -91,11 +86,9 @@ resource "aws_iam_role" "task_execution_role" {
 resource "aws_ecr_repository" "ecr" {
   name                 = var.name
   image_tag_mutability = "IMMUTABLE"
-
   image_scanning_configuration {
     scan_on_push = true
   }
-
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -104,7 +97,6 @@ resource "aws_ecr_repository" "ecr" {
 
 resource "aws_ecr_lifecycle_policy" "policy" {
   repository = aws_ecr_repository.ecr.name
-
   policy = jsonencode({
     rules : [{
       rulePriority : 1,
@@ -128,14 +120,12 @@ resource "aws_ecr_lifecycle_policy" "policy" {
 resource "aws_security_group" "secgroup" {
   name   = "${var.name}-ecs-sg"
   vpc_id = var.vpc_id
-
   ingress {
     from_port   = var.port
     to_port     = var.port
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

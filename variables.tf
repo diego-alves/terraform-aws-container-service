@@ -19,3 +19,9 @@ variable "cluster_name" {
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
 # ---------------------------------------------------------------------------------------------------------------------
+
+variable "extra_services" {
+  description = "Map of extra services"
+  type = map(object({ paths = list(string), hc_path = string, port = number }))
+  default = {}
+}

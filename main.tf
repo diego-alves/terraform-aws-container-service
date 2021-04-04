@@ -8,13 +8,17 @@ terraform {
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
-# Data Module
+# DATA MODULE
 # ---------------------------------------------------------------------------------------------------------------------
 
 module "data" {
   source  = "diego-alves/data/aws"
   version = "0.0.5"
 }
+
+# ---------------------------------------------------------------------------------------------------------------------
+# LOAD BALANCER
+# ---------------------------------------------------------------------------------------------------------------------
 
 module "load_balancer" {
   source = "./modules/elb"
@@ -23,22 +27,37 @@ module "load_balancer" {
   vpc_id  = module.data.vpc_id
   subnets = module.data.subnet_ids.app
   zone    = var.zone
-  rules = {
-    api = {
-      paths   = ["/api/*", "/docs"]
-      hc_path = "/api/v1/health/"
-      port    = 80
-    }
-  }
+  rules   = var.extra_services
 }
 
-module "service" {
+# ---------------------------------------------------------------------------------------------------------------------
+# DEFAULT SERVICE (REQUIRED)
+# ---------------------------------------------------------------------------------------------------------------------
+
+module "default_service" {
   source = "./modules/ecs"
 
   name         = var.name
+  target_group = module.load_balancer.default_target_group
+
   cluster_name = var.cluster_name
   vpc_id       = module.data.vpc_id
   subnets      = module.data.subnet_ids.app
-  target_group = module.load_balancer.default_target_group
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# EXTRA SERVICES (OPTIONAL)
+# ---------------------------------------------------------------------------------------------------------------------
+
+module "extra_services" {
+  for_each = var.extra_services
+  source   = "./modules/ecs"
+
+  name         = "${var.name}-${each.key}"
+  target_group = module.load_balancer.target_groups[each.key]
+
+  cluster_name = var.cluster_name
+  vpc_id       = module.data.vpc_id
+  subnets      = module.data.subnet_ids.app
 
 }
