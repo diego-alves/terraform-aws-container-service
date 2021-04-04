@@ -73,3 +73,9 @@ variable "secrets" {
   type        = map(string)
   default     = {}
 }
+
+variable "task_role" {
+  description = "Task Role Arn"
+  type        = string
+  default     = null
+}

@@ -34,6 +34,7 @@ resource "aws_ecs_task_definition" "task" {
   cpu    = var.cpu
   memory = var.mem
 
+  role_arn = var.task_role
   execution_role_arn = aws_iam_role.task_execution_role.arn
 
   network_mode             = "awsvpc"
@@ -149,3 +150,4 @@ resource "aws_security_group" "secgroup" {
 data "aws_ecs_cluster" "selected" {
   cluster_name = var.cluster_name
 }
+
