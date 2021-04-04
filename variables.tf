@@ -4,7 +4,15 @@
 # ---------------------------------------------------------------------------------------------------------------------
 
 variable "name" {
-    description = "The name of the Service"
+  description = "The name of the Service"
+}
+
+variable "zone" {
+  description = "Route53 zone"
+}
+
+variable "cluster_name" {
+  description = "ECS Cluster Name"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

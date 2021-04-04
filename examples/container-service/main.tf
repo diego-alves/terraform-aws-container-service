@@ -4,19 +4,9 @@ terraform {
 }
 
 module "container_service" {
-    source = "../../"
+  source = "../../"
 
-    name = "module-test"
-}
-
-output repository_url {
-    value = module.container_service.repository_url
-}
-
-output default_target_group {
-  value = module.container_service.default_target_group
-}
-
-output target_groups {
-  value = module.container_service.target_groups
+  name         = "module-test"
+  zone         = ""
+  cluster_name = ""
 }

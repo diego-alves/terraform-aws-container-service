@@ -1,3 +1,33 @@
+# ---------------------------------------------------------------------------------------------------------------------
+# ECS SERVICE
+# ---------------------------------------------------------------------------------------------------------------------
+
+resource "aws_ecs_service" "service" {
+
+  name            = var.name
+  cluster         = data.aws_ecs_cluster.selected.id
+  task_definition = aws_ecs_task_definition.task.arn
+  desired_count   = 2
+
+  launch_type          = "FARGATE"
+  force_new_deployment = true
+
+  network_configuration {
+    subnets          = var.subnets
+    security_groups  = [aws_security_group.secgroup.id]
+    assign_public_ip = false
+  }
+
+  load_balancer {
+    target_group_arn = var.target_group
+    container_name   = var.name
+    container_port   = var.port
+  }
+
+  enable_ecs_managed_tags = true
+  propagate_tags          = "SERVICE"
+
+}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # TASK DEFINITION
@@ -89,4 +119,29 @@ resource "aws_ecr_lifecycle_policy" "policy" {
       }
     }]
   })
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# SECURITY GROUP
+# ---------------------------------------------------------------------------------------------------------------------
+
+resource "aws_security_group" "secgroup" {
+  name   = "${var.name}-ecs-sg"
+  vpc_id = var.vpc_id
+
+  ingress {
+    from_port   = var.port
+    to_port     = var.port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# Data
+# ---------------------------------------------------------------------------------------------------------------------
+
+data "aws_ecs_cluster" "selected" {
+  cluster_name = var.cluster_name
 }

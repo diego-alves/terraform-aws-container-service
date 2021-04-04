@@ -7,6 +7,23 @@ variable "name" {
   description = "ECS Service Name"
 }
 
+variable "cluster_name" {
+  description = "ECS Cluster Name"
+}
+
+variable "vpc_id" {
+  description = "VPC ID" 
+}
+
+variable "subnets" {
+  description = "List of Subnets to include in the ECS Service"
+}
+
+variable "target_group" {
+  description = "Target Group"
+  
+}
+
 # variable "region" {
 #   description = "AWS region"
 # }

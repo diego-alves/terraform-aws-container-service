@@ -19,15 +19,15 @@ module "data" {
 module "load_balancer" {
   source = "./modules/elb"
 
-  name = var.name
-  vpc_id = module.data.vpc_id
+  name    = var.name
+  vpc_id  = module.data.vpc_id
   subnets = module.data.subnet_ids.app
-  zone = ""
+  zone    = var.zone
   rules = {
     api = {
-      paths = ["/api/*", "/docs"]
+      paths   = ["/api/*", "/docs"]
       hc_path = "/api/v1/health/"
-      port = 80
+      port    = 80
     }
   }
 }
@@ -35,6 +35,10 @@ module "load_balancer" {
 module "service" {
   source = "./modules/ecs"
 
-  name       = var.name
+  name         = var.name
+  cluster_name = var.cluster_name
+  vpc_id       = module.data.vpc_id
+  subnets      = module.data.subnet_ids.app
+  target_group = module.load_balancer.default_target_group
 
 }
