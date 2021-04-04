@@ -44,20 +44,18 @@ resource "aws_ecs_task_definition" "task" {
       name      = var.name
       image     = "${aws_ecr_repository.ecr.repository_url}:latest"
       essential = true
-      portMappings = [
-        {
-          containerPort = var.port
-          hostPort      = var.port
-        }
-      ],
+      portMappings = [{
+        containerPort = var.port
+        hostPort      = var.port
+      }]
       environment = [for k, v in var.environment : { name : k, value : v }]
-      secrets = [for k, v in var.secrets : { name : k, valueFrom : v }]
+      secrets     = [for k, v in var.secrets : { name : k, valueFrom : v }]
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-create-group = "true"
-          awslogs-region = "us-east-1"
-          awslogs-group = "/${var.cluster_name}/${var.name}"
+          awslogs-create-group  = "true"
+          awslogs-region        = "us-east-1"
+          awslogs-group         = "/${var.cluster_name}/${var.name}"
           awslogs-stream-prefix = "${var.name}-task"
         }
       }
