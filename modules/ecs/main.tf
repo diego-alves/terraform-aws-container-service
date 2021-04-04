@@ -53,14 +53,21 @@ resource "aws_ecs_task_definition" "task" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-create-group  = "true"
           awslogs-region        = "us-east-1"
-          awslogs-group         = "/${var.cluster_name}/${var.name}"
+          awslogs-group         = aws_cloudwatch_log_group.cw_lg.name
           awslogs-stream-prefix = "${var.name}-task"
         }
       }
     }
   ])
+}
+
+# ---------------------------------------------------------------------------------------------------------------------
+# CLOUDWATCH LOG GROUP
+# ---------------------------------------------------------------------------------------------------------------------
+
+resource aws_cloudwatch_log_group cw_lg {
+  name = "/${var.cluster_name}/${var.name}"
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
