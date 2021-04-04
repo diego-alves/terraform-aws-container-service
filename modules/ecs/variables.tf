@@ -28,10 +28,6 @@ variable "target_group" {
   type        = string
 }
 
-# variable "region" {
-#   description = "AWS region"
-# }
-
 # ---------------------------------------------------------------------------------------------------------------------
 # OPTIONAL PARAMETERS
 # These parameters have reasonable defaults.
