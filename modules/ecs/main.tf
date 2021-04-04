@@ -50,18 +50,17 @@ resource "aws_ecs_task_definition" "task" {
           hostPort      = var.port
         }
       ],
-      "environment" : [for k, v in var.environment : { name : k, value : v }],
-      "secrets" : [for k, v in var.secrets : { name : k, valueFrom : v }],
+      "environment" : [for k, v in var.environment : { name : k, value : v }]
+      "secrets" : [for k, v in var.secrets : { name : k, valueFrom : v }]
       "logConfiguration" : {
-        "logDriver" : "awslogs",
+        "logDriver" : "awslogs"
         "options" : {
-          "awslogs-create-group" : true,
-          "awslogs-region" : "us-east-1",
+          "awslogs-create-group" : "true"
+          "awslogs-region" : "us-east-1"
           "awslogs-group" : "/${var.cluster_name}/${var.name}"
-          "awslogs-stream-prefix" : "${var.name}-task"
+          "awslogs-stream-prefix" : "${var.name}-task"s
         }
       }
-
     }
   ])
 }
