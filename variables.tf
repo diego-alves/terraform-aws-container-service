@@ -27,7 +27,7 @@ variable "extra_services" {
   default = {}
 }
 
-variable "task_role" {
+variable "execution_role" {
   description = "Task Role Arn"
   type = string
   default = null
