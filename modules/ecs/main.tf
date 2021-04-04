@@ -34,7 +34,7 @@ resource "aws_ecs_task_definition" "task" {
   cpu    = var.cpu
   memory = var.mem
 
-  role_arn = var.task_role
+  task_role_arn = var.task_role
   execution_role_arn = aws_iam_role.task_execution_role.arn
 
   network_mode             = "awsvpc"
