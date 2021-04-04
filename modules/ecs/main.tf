@@ -58,7 +58,7 @@ resource "aws_ecs_task_definition" "task" {
           "awslogs-create-group" : "true"
           "awslogs-region" : "us-east-1"
           "awslogs-group" : "/${var.cluster_name}/${var.name}"
-          "awslogs-stream-prefix" : "${var.name}-task"s
+          "awslogs-stream-prefix" : "${var.name}-task"
         }
       }
     }
