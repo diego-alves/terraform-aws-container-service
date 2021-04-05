@@ -26,9 +26,3 @@ variable "extra_services" {
   type = map(object({ paths = list(string), hc_path = string, port = number }))
   default = {}
 }
-
-variable "execution_role" {
-  description = "Task Role Arn"
-  type = string
-  default = null
-}

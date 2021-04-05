@@ -43,7 +43,6 @@ module "default_service" {
   cluster_name = var.cluster_name
   vpc_id       = module.data.vpc_id
   subnets      = module.data.subnet_ids.app
-  execution_role    = var.execution_role
 }
 
 # ---------------------------------------------------------------------------------------------------------------------

@@ -74,8 +74,3 @@ variable "secrets" {
   default     = {}
 }
 
-variable "execution_role" {
-  description = "Task Role Arn"
-  type        = string
-  default     = null
-}

@@ -34,8 +34,7 @@ resource "aws_ecs_task_definition" "task" {
   cpu    = var.cpu
   memory = var.mem
 
-  # task_role_arn = var.task_role
-  execution_role_arn = var.execution_role
+  execution_role_arn = aws_iam_role.task_execution_role.arn
 
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -67,7 +66,7 @@ resource "aws_ecs_task_definition" "task" {
 # CLOUDWATCH LOG GROUP
 # ---------------------------------------------------------------------------------------------------------------------
 
-resource aws_cloudwatch_log_group cw_lg {
+resource "aws_cloudwatch_log_group" "cw_lg" {
   name = "/${var.cluster_name}/${var.name}"
 }
 
@@ -135,10 +134,18 @@ resource "aws_ecr_lifecycle_policy" "policy" {
 resource "aws_security_group" "secgroup" {
   name   = "${var.name}-ecs-sg"
   vpc_id = var.vpc_id
+
   ingress {
     from_port   = var.port
     to_port     = var.port
     protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
