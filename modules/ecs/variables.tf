@@ -33,6 +33,12 @@ variable "target_group" {
 # These parameters have reasonable defaults.
 # ---------------------------------------------------------------------------------------------------------------------
 
+variable "replicas" {
+  description = "Number of running tasks"
+  type        = number
+  default     = 2
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # TASK CPU AND MEMORY FOR FARGATE
 # 

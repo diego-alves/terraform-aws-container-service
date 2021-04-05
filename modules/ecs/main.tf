@@ -6,7 +6,7 @@ resource "aws_ecs_service" "service" {
   name                    = var.name
   cluster                 = data.aws_ecs_cluster.selected.id
   task_definition         = aws_ecs_task_definition.task.arn
-  desired_count           = 2
+  desired_count           = var.replicas
   launch_type             = "FARGATE"
   force_new_deployment    = true
   enable_ecs_managed_tags = true
@@ -95,7 +95,7 @@ resource "aws_iam_role" "task_execution_role" {
   dynamic "inline_policy" {
     for_each = var.secrets
     content {
-      name = inline_policy.key
+      name = inline_policy.value
       policy = jsonencode({
         Version = "2012-10-17"
         Statement = [{

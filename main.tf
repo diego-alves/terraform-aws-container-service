@@ -51,6 +51,7 @@ module "default_service" {
   cpu          = var.default_service.cpu
   mem          = var.default_service.mem
   port         = var.default_service.port
+  replicas     = var.default_service.replicas
 
   environment = var.default_service.environment
   secrets     = var.default_service.secrets
@@ -74,6 +75,7 @@ module "extra_services" {
   cpu         = each.value.cpu
   mem         = each.value.mem
   port        = each.value.port
+  replicas    = each.value.replicas
   environment = each.value.environment
   secrets     = each.value.secrets
 }

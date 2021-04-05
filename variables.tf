@@ -29,6 +29,7 @@ variable "default_service" {
     cpu         = number
     mem         = number
     port        = number
+    replicas    = number
     environment = map(string)
     secrets     = map(string)
   })
@@ -38,6 +39,7 @@ variable "default_service" {
     cpu         = 256
     mem         = 512
     port        = 80
+    replicas    = 2
     environment = {}
     secrets     = {}
   }
@@ -51,6 +53,7 @@ variable "extra_services" {
     cpu         = number
     mem         = number
     port        = number
+    replicas    = number
     environment = map(string)
     secrets     = map(string)
   }))
