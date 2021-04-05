@@ -49,7 +49,7 @@ resource "aws_ecs_task_definition" "task" {
         hostPort      = var.port
       }]
       environment = [for k, v in var.environment : { name : k, value : v }]
-      secrets     = [for k, v in var.secrets : { name : k, valueFrom : v }]
+      secrets     = [for k, v in var.secrets : { name : k, valueFrom : "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${v}" }]
       logConfiguration = {
         logDriver = "awslogs"
         options = {
@@ -91,6 +91,23 @@ resource "aws_iam_role" "task_execution_role" {
         }
       ]
   })
+
+  dynamic "inline_policy" {
+    for_each = var.secrets
+    content {
+      name = inline_policy.key
+      policy = jsonencode({
+        Version = "2012-10-17"
+        Statement = [{
+          Effect = "Allow"
+          Action = ["ssm:GetParameters", "kms:Decrypt"]
+          Resource = [
+            "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/${inline_policy.value}"
+          ]
+        }]
+      })
+    }
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -158,3 +175,6 @@ data "aws_ecs_cluster" "selected" {
   cluster_name = var.cluster_name
 }
 
+data "aws_caller_identity" "current" {}
+
+data "aws_region" "current" {}

@@ -21,8 +21,38 @@ variable "cluster_name" {
 # You may set these variables to override their default values.
 # ---------------------------------------------------------------------------------------------------------------------
 
+variable "default_service" {
+  description = "Default Service options"
+  type = object({
+    suffix      = string
+    hc_path     = string
+    cpu         = number
+    mem         = number
+    port        = number
+    environment = map(string)
+    secrets     = map(string)
+  })
+  default = {
+    suffix      = null
+    hc_path     = "/"
+    cpu         = 256
+    mem         = 512
+    port        = 80
+    environment = {}
+    secrets     = {}
+  }
+}
+
 variable "extra_services" {
   description = "Map of extra services"
-  type = map(object({ paths = list(string), hc_path = string, port = number }))
+  type = map(object({
+    paths       = list(string)
+    hc_path     = string
+    cpu         = number
+    mem         = number
+    port        = number
+    environment = map(string)
+    secrets     = map(string)
+  }))
   default = {}
 }

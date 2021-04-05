@@ -23,11 +23,16 @@ module "data" {
 module "load_balancer" {
   source = "./modules/elb"
 
-  name    = var.name
   vpc_id  = module.data.vpc_id
   subnets = module.data.subnet_ids.app
-  zone    = var.zone
-  rules   = var.extra_services
+
+  name  = var.name
+  zone  = var.zone
+  rules = var.extra_services
+  default_rule = {
+    hc_path = var.default_service.hc_path
+    port    = var.default_service.port
+  }
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -37,12 +42,18 @@ module "load_balancer" {
 module "default_service" {
   source = "./modules/ecs"
 
-  name         = var.name
+  vpc_id       = module.data.vpc_id
+  subnets      = module.data.subnet_ids.app
   target_group = module.load_balancer.default_target_group
 
   cluster_name = var.cluster_name
-  vpc_id       = module.data.vpc_id
-  subnets      = module.data.subnet_ids.app
+  name         = var.default_service.suffix == null || var.default_service.suffix == "" ? var.name : "${var.name}-${var.default_service.suffix}"
+  cpu          = var.default_service.cpu
+  mem          = var.default_service.mem
+  port         = var.default_service.port
+
+  environment = var.default_service.environment
+  secrets     = var.default_service.secrets
 }
 
 # ---------------------------------------------------------------------------------------------------------------------
@@ -53,11 +64,16 @@ module "extra_services" {
   for_each = var.extra_services
   source   = "./modules/ecs"
 
-  name         = "${var.name}-${each.key}"
+  vpc_id       = module.data.vpc_id
+  subnets      = module.data.subnet_ids.app
   target_group = module.load_balancer.target_groups[each.key]
 
   cluster_name = var.cluster_name
-  vpc_id       = module.data.vpc_id
-  subnets      = module.data.subnet_ids.app
+  name         = "${var.name}-${each.key}"
 
+  cpu         = each.value.cpu
+  mem         = each.value.mem
+  port        = each.value.port
+  environment = each.value.environment
+  secrets     = each.value.secrets
 }
