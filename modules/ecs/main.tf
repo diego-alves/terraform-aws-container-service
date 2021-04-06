@@ -42,7 +42,7 @@ resource "aws_ecs_task_definition" "task" {
   container_definitions = jsonencode([
     {
       name      = var.name
-      image     = "${aws_ecr_repository.ecr.repository_url}:latest"
+      image     = "${aws_ecr_repository.ecr.repository_url}:${var.image_tag}"
       essential = true
       portMappings = [{
         containerPort = var.port
@@ -53,7 +53,7 @@ resource "aws_ecs_task_definition" "task" {
       logConfiguration = {
         logDriver = "awslogs"
         options = {
-          awslogs-region        = "us-east-1"
+          awslogs-region        = data.aws_region.current
           awslogs-group         = aws_cloudwatch_log_group.cw_lg.name
           awslogs-stream-prefix = "${var.name}-task"
         }

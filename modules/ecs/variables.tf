@@ -39,6 +39,12 @@ variable "replicas" {
   default     = 2
 }
 
+variable "image_tag" {
+  description = "Docker Image tag"
+  type        = string
+  default     = "latest"
+}
+
 # ---------------------------------------------------------------------------------------------------------------------
 # TASK CPU AND MEMORY FOR FARGATE
 # 
